@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+<!-- 콘솔 출력 패턴 지정 -->
+	<appender name="consoleAppender" class="ch.qos.logback.core.ConsoleAppender">
+		<encoder>
+			<pattern>
+				%d{yyyy-MM-dd HH:mm:ss} %-5level ===== [%thread] %logger{36} -%msg%n
+			</pattern>
+		</encoder>
+	</appender>
+	
+<!-- log 파일로 저장 -->
+	<appender name="fileAppender" class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<file>src/main/resources/logs/logger_log.log</file>
+		
+		<encoder>
+			<pattern>
+				%d{yyyy-MM-dd HH:mm:ss} [%thread] [%-5level] %logger{36} -%msg%n <!-- 초를 안쓰면 덮어씌어짐 -->
+			</pattern>
+		</encoder>
+		
+		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+			<fileNamePattern>
+				src/main/resources/logs/logger-%d{yyyy-MM-dd}.log <!-- 저장 파일명 -->
+			</fileNamePattern>
+			<history>30</history> <!-- 몇일단위로 저장할건가 -->
+		</rollingPolicy>
+	</appender>
+	
+
+	<logger name="com.study" level="info" />
+	
+	<!-- log4jdbc: 콘솔에 결과를 보여줌 --> 
+	<logger name="jdbc" level="off" />
+	<logger name="jdbc.sqlonly" lever="off" />
+	<logger name="jdbc.sqltiming" level="debug" /> <!-- 중간에 가로채감 -->
+	<!-- 결과를 글로 보여줌 -->
+	<logger name="jdbc.resultset" level="debug" />
+	<!-- 결과를 테이블 형식으로 보여줌 -->
+	<logger name="jdbc.resultsettable" level="debug" />
+	
+	<logger name="jdbc.connection" level="off" />
+	
+	<root level="off">
+		<appender-ref ref="consoleAppender" />
+	</root>
+</configuration>

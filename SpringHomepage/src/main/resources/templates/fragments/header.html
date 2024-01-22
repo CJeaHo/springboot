@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>header</title>
+</head>
+<div th:fragment="fragment-menu">
+<h1 align="center">SpringBoot Homepage</h1>
+	<br>
+	<!-- 로그인 전-->
+	<div th:if="${loginMember == null}" class="login-area" align="right">
+		<form action="login.ac" method="post">
+			<table>
+				<tr>
+					<td>아이디</td>
+					<td><input name="id" required></td>
+					<td rowspan="2"><button style="height: 50px;">로그인</button></td>
+				</tr>
+				<tr>
+					<td>비밀번호</td>
+					<td><input type="password" name="password" required></td>
+				</tr>
+				<tr>
+					<td colspan="3" align="center">
+						<a href="registerForm.ac">회원가입</a>
+						<a href="">아이디/비번찾기</a>
+					</td>
+				</tr>
+			</table>
+		</form>
+		</div>
+		<!-- 로그인 후 -->
+		<div th:unless="${loginMember == null}" align="right"> 
+			<!-- = ${loginMember == null} 이게 거짓이라면~~(=th:if="${loginMember != null}) -->
+			<table>
+				<tr>
+					<td colspan="2">
+						<h3 th:text="${loginMember.name } + '님 환영합니다'"></h3> 
+						<!-- = <h3 th:text="|${loginMember.name }님 환영합니다|"></h3> -->
+						<!-- = <h3>[[${loginMember.name }]]님 환영합니다</h3>-->
+					</td>
+				</tr>
+				<tr>
+					<td><a href="">마이페이지</a> /</td>
+					<td><a href="logout.ac">로그아웃</a></td>
+				</tr>
+			</table>
+		</div>
+
+	<br>
+
+	<table class="nav-area" align="center">
+		<tr>
+			<td>HOME</td>
+			<td>공지사항</td>
+			<td onclick="location.href='list.ac'">게시판</td>
+			<td>ETC</td>
+		</tr> 
+	</table>
+	</div>
+</html>

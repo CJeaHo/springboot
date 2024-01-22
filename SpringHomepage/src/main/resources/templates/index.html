@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>index</title>
+<link href="/css/menu.css" rel="stylesheet" />
+</head>
+<body>
+	<div th:replace="~{/fragments/header.html :: fragment-menu}"></div> <!--최신 문법 -->
+	<!--<div th:replace="/fragments/header.html :: fragment-menu"></div>--> <!--올드한 문법-->
+	<!--th:replace = include-->
+	<!-- <div th:fragment="fragment-menu">의 fragment-menu-->
+	<div class="imgwrap"><img src="/img/city.jpg" alt="city.jpg"></div>
+</body>
+
+
+</html>

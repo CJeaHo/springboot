@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>list</title>
+<script src="/webjars/jquery/3.7.1/jquery.min.js"></script>
+<link href="/css/menu.css" rel="stylesheet" />
+<link href="/css/boardList.css" rel="stylesheet" />
+</head>
+<body>
+	<div th:replace="~{/fragments/header.html :: fragment-menu}"></div>
+	<h1 align="center">게시판</h1>
+	
+	<div class="outer">
+	<div th:text= "|총 게시글의 수: ${boardPage.TotalElements}|"></div> <!--page속성에서 제공해주는 기본 필드-->
+    <table id="list-area" align="center">
+        <thead>
+            <th width="10%">글번호</th>
+            <th width="47%">제목</th>
+            <th width="15%">작성자</th>
+            <th width="10%">조회수</th>
+            <th width="18%">작성일</th>
+        </thead>
+        <tbody>
+			<tr th:each="board, state :${boardPage}"> <!--boardPaga의 값들을 board에 넣어줌-->
+				<td th:text="${boardPage.TotalElements - nowPage*boardPage.size - state.index}"></td>
+				<!--<td id="ellip">
+					<a href="detail?bNo=${b.board_no}">${b.board_title}</a>
+				</td> 일반 버전-->
+				<td id="ellip"> <!-- 링크: @{...} -->
+					<a th:href="@{detail.ac(bNo=${board.bNo})}" th:text="${board.title}"></a>
+				</td>
+				<td th:text="${board.writer}"></td>
+				<td th:text="${board.count}"></td>
+<!--				<td th:text="${board.createDate}"></td>-->
+				<td th:text="*{#temporals.format(board.createDate, 'yyyy-MM-dd')}"></td>
+			</tr>
+        </tbody>
+    </table>
+    
+    <!-- 페이징 처리 -->
+	<div align="center">
+		<span th:if="${nowPage > 0}">
+			<a th:href="@{${'/list'}(nowPage=${nowPage-1})}">이전</a> <!-- 현재페이지에 list를 넘겨줌 -->
+		</span>
+		<!--
+			#numbers: 타임리프에서 숫자 포맷 메소드를 지원해줌
+			sequence(시작, 끝, [증감값]) 메소드 : 증감값 생략시 1 
+		-->
+											<!--0페이지부터 총 페이지수 까지 1페이지씩 반복-->
+		<span th:each="pageNumber :${#numbers.sequence(0, boardPage.totalPages-1)}">
+			<span th:if="${pageNumber == nowPage}"> <!-- 해당 페이지와 현재 페이지가 같다면 -->
+				<strong th:text="|[${pageNumber+1}]|"></strong>
+			</span>
+			<span th:unless="${pageNumber == nowPage}"> <!-- 해당 페이지와 현재 페이지가 같지않다면 -->
+				<a th:href="@{${'/list'}(nowPage=${pageNumber})}" th:text="|[${pageNumber+1}]|"></a>
+			</span>
+		</span>
+		<span th:if="${nowPage < boardPage.totalPages-1}">
+			<a th:href="@{${'/list'}(nowPage=${nowPage+1})}">다음</a> <!-- 현재페이지에 list를 넘겨줌 -->
+		</span>
+	</div>
+	<div th:if="${loginMember != null}" align="right">
+		<a href="writeForm">새 글 등록</a>
+	</div>
+    </div>
+</body>
+</html>

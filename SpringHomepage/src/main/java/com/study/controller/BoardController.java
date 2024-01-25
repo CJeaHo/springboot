@@ -1,5 +1,7 @@
 package com.study.controller;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Controller;
@@ -7,10 +9,10 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.SessionAttribute;
 
 import com.study.domain.Board;
 import com.study.domain.Member;
+import com.study.domain.Reply;
 import com.study.service.BoardService;
 import com.study.service.ReplyService;
 
@@ -62,10 +64,22 @@ public class BoardController {
 			model.addAttribute("loginMember", loginMember);
 		}
 		
-//		replyService.Reply(bNo);
-		Board board = boardService.selectDetail(bNo).get();
-		model.addAttribute("board", board);
-		return "board/detail";
+
+		// 게시글 상세 정보 조회
+        Board board = boardService.selectDetail(bNo).orElse(null);
+        if (board != null) {
+            // 댓글 목록 조회
+            List<Reply> replyList = replyService.replyList(bNo);
+
+            // 모델에 추가
+            model.addAttribute("board", board);
+            model.addAttribute("replyList", replyList);
+
+            return "board/detail";
+        } else {
+            model.addAttribute("errorMsg", "상세조회 실패");
+            return "common/errorPage";
+        }
 	}
 	
 	@PostMapping("update.ac")
@@ -73,6 +87,28 @@ public class BoardController {
 		 boardService.update(board);
 		return "redirect:list.ac";
 	}
+	
+	/*@PostMapping("reply")
+	public String reply(@RequestParam("boardNo") Long boardNo,
+	        			@RequestParam("replyContent") String replyContent,
+	        			@RequestParam("loginMemberId") String loginMemberId,
+	        			Model model) {
+		
+		Reply reply = new Reply();
+		reply.setRefBno(boardNo);
+		reply.setRContent(replyContent);
+		reply.setRWriter(loginMemberId);
+		
+		Reply result = replyService.reply(reply);
+		
+		if (result != null) {
+	        // 댓글 등록 성공 시 리다이렉트 또는 포워딩 로직을 추가
+	        return "redirect:/detail?bNo=" + boardNo;
+	    } else {
+	        model.addAttribute("errorMsg", "댓글 등록 실패");
+	        return "common/errorPage";
+	    }
+	}*/
 }
 
 

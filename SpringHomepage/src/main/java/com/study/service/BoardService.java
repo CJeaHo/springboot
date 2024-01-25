@@ -9,22 +9,29 @@ import org.springframework.stereotype.Service;
 
 import com.study.domain.Board;
 import com.study.repository.BoardRepository;
+import com.study.repository.ReplyRepository;
 
 @Service
 public class BoardService {
-
+	
 	@Autowired
 	public BoardRepository boardRepository;
 
+	@Autowired
+	public ReplyRepository replyRepository;
+	
+	// 게시글 목록
 	public Page<Board> list(Pageable pageable) {
 		return boardRepository.findAll(pageable);
 	}
 
+	// 게시글 작성
 	public Board insert(Board board) {
 		return boardRepository.save(board);
 	}
 
-	public Optional<Board> selectDetail(Long bNo) {
+	// 상세보기 및 조회수 증가
+	public Optional<Board> selectDetail(Long bNo) { 
 		return boardRepository.findById(bNo)
 							  .map(board-> 
 							  	 { board.setCount(board.getCount() + 1);
@@ -34,11 +41,14 @@ public class BoardService {
 									// map 우선순위를 갖는다
 	}
 
-	public Board update(Board board) {
+	// 게시글 수정
+	public Board update(Board board) { 
 		Board reBoard = boardRepository.findById(board.getBNo()).get(); // 기존꺼를 가지고와서 영속성안에 넣어야한다
 		reBoard.setTitle(board.getTitle()); // 기존의 제목을 넣고
 		reBoard.setContent(board.getContent()); // 기존의 내용을 넣고
 		
 		return boardRepository.save(reBoard);
 	}
+	
+	
 }

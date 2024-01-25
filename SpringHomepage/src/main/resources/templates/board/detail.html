@@ -4,47 +4,87 @@
 <meta charset="UTF-8">
 <title>write</title>
 <link href="/css/menu.css" rel="stylesheet" />
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
 </head>
 <body>
 	<div th:replace="~{/fragments/header.html :: fragment-menu}"></div>
 	<div class="outer">
-	<form action="update.ac" method="post">
-      <table align="center">
-         <tr>
-            <th colspan="2" bgcolor="yellow" height="30">상 세 보 기</th>
-         </tr>
-         <tr>
-            <td>제목</td>
-            <td><input name="title" th:value="${board.title}"></td>
-         </tr>
-         <tr>
-            <td>작성자</td>
-            <td name="writer" th:text="${board.writer}"></td>
-         </tr>
-         <tr>
-            <td>작성일</td>
-            <td th:text="*{#temporals.format(board.createDate, 'yyyy-MM-dd')}"></td>
-         </tr>
-         <tr>
-            <td>조회수</td>
-            <td colspan="2" align="right" th:text="|조회수: ${board.count}|"></td>
-         </tr>
-         <tr>
-            <td>내용</td>
-            <td><textarea name="content" th:text="${board.content}" rows="10" cols="50"></textarea></td>
-         </tr>
-         <tr>
-            <td th:if="${loginMember == null}" colspan="2" align="center"><hr>
-            	<input type="button" value="리스트" onclick="location.href='list.ac'">
-            </td>
-            <td th:if="${loginMember != null}" colspan="2" align="center"><hr>		
-            	<input type="submit" value="수정">&emsp;
-            	<input type="button" value="리스트" onclick="location.href='list.ac'">
-			</td>
-         </tr>
-      </table>  
-      <input type="hidden" name="bNo" th:value="${board.bNo}">
-   </form>
-   </div>
+		<form action="update.ac" method="post">
+			<table align="center">
+				<tr>
+					<th colspan="2" bgcolor="yellow" height="30">상 세 보 기</th>
+				</tr>
+				<tr>
+					<td>제목</td>
+					<td><input name="title" th:value="${board.title}"></td>
+				</tr>
+				<tr>
+					<td>작성자</td>
+					<td name="writer" th:text="${board.writer}"></td>
+				</tr>
+				<tr>
+					<td>작성일</td>
+					<td th:text="${#temporals.format(board.createDate, 'yyyy-MM-dd')}"></td>
+				</tr>
+				<tr>
+					<td>조회수</td>
+					<td colspan="2" align="right" th:text="|조회수: ${board.count}|"></td>
+				</tr>
+				<tr>
+					<td>내용</td>
+					<td><textarea name="content" th:text="${board.content}" rows="10" cols="50"></textarea></td>
+				</tr>
+				<tr>
+					<td th:if="${loginMember == null}" colspan="2" align="center"><hr>
+						<input type="button" value="리스트" onclick="location.href='list.ac'">
+					</td>
+					<td th:if="${loginMember != null}" colspan="2" align="center"><hr>		
+						<input type="submit" value="수정">&emsp;
+						<input type="button" value="리스트" onclick="location.href='list.ac'">
+					</td>
+				</tr>
+			</table>  
+			<input type="hidden" name="bNo" th:value="${board.bNo}">
+		</form>
+     
+		<br>
+      
+		<table align="center" style="width:100%;">
+			<tr>
+				<th width="15%">댓글작성</th>
+				<th width="60%"><textarea cols="70" rows="3" id="reply_content"></textarea></th>
+				<th width="25%"><button onclick="insertReply();">등록</button></th>
+			</tr>
+			<tr>
+				<td colspan="3" style="text-align: right;">댓글의 총 갯수 : [[${replyList.size()}]]</td>
+			</tr>
+		
+			<tr th:each="r : ${replyList}">
+				<td th:text="${r.rWriter}"></td>
+				<td th:text="${r.rContent}"></td>
+				<td th:text="${r.rCreateDate}"></td>
+			</tr>
+		</table>
+	</div>
+	<script>
+		function insertReply() {
+			$.ajax({
+				url: "reply",
+				data: {
+					boardNo:"[[${board.bNo}]]",
+					loginMemberId:"[[${loginMember != null ? loginMember.id : ''}]]",
+					replyContent:$("#reply_content").val()
+				},
+				type: "post",
+				success:function(result) {
+					alert(result);
+					location.reload();
+				},
+				error:function(){
+					console.log("댓글 등록 ajax통신 실패");
+				}
+			});
+		}
+	</script>
 </body>
 </html>

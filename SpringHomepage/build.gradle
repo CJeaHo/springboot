@@ -42,6 +42,18 @@ dependencies {
     implementation 'org.webjars:jquery:3.7.1'
     // security
     implementation 'org.springframework.security:spring-security-crypto:6.2.1'
+    
+    // restAPI의 post test
+    implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.3.0'
+    
+    // 새로고침으로 html 갱신
+	developmentOnly 'org.springframework.boot:spring-boot-devtools'
+	
+    implementation 'org.hamcrest:hamcrest:2.2'
+    implementation 'org.hamcrest:hamcrest-library:2.2'
+    implementation 'junit:junit:4.13.2'
+
+    
 }
 
 tasks.named('test') {

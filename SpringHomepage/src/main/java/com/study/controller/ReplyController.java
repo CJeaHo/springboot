@@ -15,7 +15,7 @@ public class ReplyController {
 	@Autowired
 	public ReplyService replyService;
 	
-	@PostMapping("reply")
+	@PostMapping("reply") // responsBody는 html이 아닌 json으로 반환 
 	public @ResponseBody String reply(@RequestParam("boardNo") Long boardNo,
             						  @RequestParam("replyContent") String replyContent,
             						  @RequestParam("loginMemberId") String loginMemberId) {

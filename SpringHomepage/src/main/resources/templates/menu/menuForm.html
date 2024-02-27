@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<link href="/css/menu.css" rel="stylesheet" />
+<link href="/css/boardList.css" rel="stylesheet" />
+<script src="/webjars/jquery/3.7.1/jquery.min.js"></script>
+<title>Insert title here</title>
+<style>
+	.menu-test {
+		text-align: center;
+	}
+	.btn {
+		padding: 5px 16px;
+		border-radius: 4px;
+		cursor: pointer;
+		width: 100px;
+	}
+</style>
+</head>
+<!--
+get /menu : 전체메뉴 조회
+get /menu/type/kr : 한식만 조회
+get /menu/type/ch : 중식만 조회
+get /menu/type/jp : 일식만 조회
+
+get /menu/taste/mild : 순한 맛만 조회
+get /menu/taste/hot : 매운 맛만 조회
+get /menu/1 : 1번 메뉴만 조회
+
+post /menu : 메뉴 등록
+
+put /menu : 메뉴 전체 수정
+patch /menu : 메뉴 일부 수정
+
+delete /menu/2 : 2번 메뉴 삭제
+-->
+
+<body>
+	<div th:replace="~{/fragments/header.html :: fragment-menu}"></div>
+	<h1 align="center">menu restfull api</h1>
+	<!-- 1. get /menu : 전체메뉴 조회 -->
+	<div class="outer">
+	<div class="menu-test">
+		<h3>전체 메뉴</h3>
+		<button type="button" onclick="menuAllList();" class="btn">조회</button>
+	</div>
+	<div id="menu-result"></div>
+	<hr>
+	
+	<script>
+		function menuAllList() {
+			$.ajax({
+				url: '/menu',
+				success(result) {
+					console.log(result);
+					menuTable('#menu-result', result)
+				},
+				error: console.log
+			});
+		}
+	</script>
+	
+	<!-- 2.
+	get /menu/type/kr : 한식만 조회
+	get /menu/type/ch : 중식만 조회
+	get /menu/type/jp : 일식만 조회
+	-->
+	<div class="menu-test">
+		<h3>메뉴 타입별 조회(get)</h3>
+		<select id="typeSelector">
+			<option value="" selected></option>
+			<option value="KR">한식</option>
+			<option value="CH">중식</option>
+			<option value="JP">일식</option>
+		</select>
+	</div>
+	<div id="menuType-result"></div>
+	<hr>
+	<script type="text/javascript">
+		document.querySelector("#typeSelector").addEventListener('change', (e) => { // change 이벤트가 e에 저장됨
+			console.log(e.target.value);
+			$.ajax ({
+				url: `/menu/type/${e.target.value}`,
+				success (result) { // = success: function(result)
+					console.log(result);
+					menuTable('#menuType-result', result)
+				},
+				error: console.log
+			});
+		});
+	</script>
+	
+	<!-- 3.
+	get /menu/type/kr : 한식만 조회
+	get /menu/type/ch : 중식만 조회
+	get /menu/type/jp : 일식만 조회
+	
+	get /menu/taste/mild : 순한 맛만 조회
+	get /menu/taste/hot : 매운 맛만 조회
+	-->
+	<div class="menu-test">
+		<h3>메뉴 타입과 맛별 조회(get)</h3>
+		<form name="menuTypeTasteFrm">
+			<div>
+				<input type="radio" name="type" value="KR">한식
+				<input type="radio" name="type" value="CH">중식
+				<input type="radio" name="type" value="JP">일식
+			</div>
+			<br>
+			<div>
+				<input type="radio" name="taste" value="MILD">순
+				<input type="radio" name="taste" value="HOT">매
+			</div>
+			<br>
+			<button class="btn">조회</button>
+		</form>
+	</div>
+	<div id="menuTypeTaste-result"></div>
+	<hr>
+	<script>
+		document.menuTypeTasteFrm.addEventListener('submit', (e) => { // submit을 하면 실행되는 이벤트
+			e.preventDefault(); // submit을 막아줌 action이 없어서 일단 막아줘야함
+			const type = e.target.type.value;
+			const taste = e.target.taste.value;
+			console.log(type + ', ' + taste);
+			$.ajax({
+				url: `/menu/type/${type}/taste/${taste}`,
+				success (result) {
+					console.log(result);
+					menuTable('#menuTypeTaste-result', result)
+				},
+				error: console.log	
+			});
+		})
+	</script>
+	
+	<!-- 4. post /menu : 메뉴 등록-->
+	<div class="menu-test">
+		<h3>메뉴 등록하기(post)</h3>
+		<form name="menuEnrollFrm">
+			음식점: <input name="restaurant" required><br>
+			메뉴명: <input name="name" required><br>
+			가&emsp;격: <input type="number" name="price" required><br>
+			<div>
+				<input type="radio" name="type" value="KR">한식
+				<input type="radio" name="type" value="CH">중식
+				<input type="radio" name="type" value="JP">일식
+			</div>
+			<div>
+				<input type="radio" name="taste" value="MILD">순
+				<input type="radio" name="taste" value="HOT">매
+			</div>
+			<br>
+			<button class="btn">등록</button>
+		</form>
+	</div><br>
+	<hr>
+	<script>
+		document.menuEnrollFrm.addEventListener('submit', (e) => {
+			e.preventDefault();
+			const menu = {
+				restaurant : e.target.restaurant.value,
+				name : e.target.name.value,
+				price : e.target.price.value,
+				type : e.target.type.value,
+				taste: e.target.taste.value
+			}
+			console.log(menu);
+			
+			// json의 형태로 받을려면 직렬화를 해야함
+			// 직렬화란 restaurant=음식점&name=메뉴명&price=가격...
+			$.ajax ({
+				url: '/menu',
+				method: 'post',
+				data: JSON.stringify(menu),
+				contentType: "application/json; charset=utf-8",
+				success (result, textStatus, jqXHR) {
+					console.log(result);
+					console.log(textStatus); // 성공 실패 여부(success/fail)
+					console.log(jqXHR.getAllResponseHeaders('Location'));
+					/*
+					connection:
+					content-length:
+					date:
+					keep-alive:
+					location:
+					*/
+
+					
+					const location = jqXHR.getResponseHeader("Location");
+					console.log(location.split('/').pop()); //  '/' 으로 나눠서 맨 마지막을 빼는 것 = location 에서 id만 뽑아오기
+					
+					// http 상태코드가 201일 때 (created가 잘 되었을 때)
+					if(jqXHR.status == 201) {
+						alert("메뉴가 등록되었습니다");
+					}
+					
+				},
+				error: console.log,
+				complete() {
+					e.target.reset();
+				}
+			});
+		})
+	</script>
+	
+	<!-- 5. put /menu : 메뉴 전체 수정-->
+	<div class="menu-test">
+		<h3>메뉴 수정하기(put)</h3>
+		<p>메뉴번호 검색 후 수정</p>
+		<form name="menuSearchFrm">
+			메뉴번호: <input name="id">
+			<button class="btn">검색</button>
+		</form>
+		<form name="menuUpdateFrm">
+			음식점: <input name="restaurant"><br>
+			메뉴명: <input name="name"><br>
+			가&emsp;격: <input type="number" name="price"><br>
+			<div>
+				<input type="radio" name="type" value="KR">한식
+				<input type="radio" name="type" value="CH">중식
+				<input type="radio" name="type" value="JP">일식
+			</div>
+			<div>
+				<input type="radio" name="taste" value="MILD">순
+				<input type="radio" name="taste" value="HOT">매
+			</div>
+			<br>
+			<button class="btn">수정</button>
+			<input type="hidden" name="id" value="${id}">
+		</form>
+	</div><br>
+	<hr>
+	<script>
+		document.menuSearchFrm.addEventListener('submit',(e) => {
+			e.preventDefault();
+			findById(e.target.id.value);
+			
+		})
+		document.menuUpdateFrm.addEventListener('submit',(e) => {
+			e.preventDefault();
+			const FrmData = new FormData(e.target);
+			const menu = {};
+			FrmData.forEach((value, key) => {
+				menu[key] = value;
+			});
+			console.log("json 직렬화: " + JSON.stringify(menu));
+			$.ajax({
+				url:'/menu',
+				data: JSON.stringify(menu),
+				method: 'put',
+				contentType: 'application/json; charset=utf-8',
+				success(result) {
+					console.log(result);
+				},
+				error: console.log,
+				complete() {
+					e.target.reset();
+				}
+			})
+		})
+	</script>
+	
+	<!-- 5. delete /menu/{id} : 메뉴 삭제-->
+	<div class="menu-test">
+		<h3>메뉴 삭제하기(delete)</h3>
+		<p>메뉴번호로 삭제</p>
+		<form name="menuDeleteFrm">
+			메뉴번호: <input name="id">
+			<button class="btn">검색</button>
+		</form><br>
+	</div>
+	
+	<script>
+		document.menuDeleteFrm.addEventListener('submit',(e) => {
+			e.preventDefault();
+			findById(e.target.id.value);
+			
+			$.ajax({
+				url: `/menu/${e.target.id.value}`,
+				method: 'delete',
+				success (result) {
+					console.log(result);
+				},
+				error: console.log,
+				complete(jqXHR) {
+					e.target.reset();
+					if(jqXHR.status === 204) {
+						alert("삭제되었습니다");
+					}
+				}
+			})
+		})
+	</script>
+	
+	<script>
+		const findById = id => {
+			console.log(id);
+			$.ajax ({
+				url: `menu/${id}`,
+				success (result) {
+					console.log(result);
+					const frm = document.menuUpdateFrm;
+					const {id, name, restaurant, price, taste, type} = result;
+					// = {id : {id}, name: {name}, restaurant: {restaurant}, taste: {taste}, type: {type}}
+					frm.id.value = id; // value="${id}"
+					frm.name.value= name;
+					frm.restaurant.value = restaurant;
+					frm.price.value = price;
+					frm.taste.value = taste;					
+					frm.type.value = type;
+				},
+				error (jqXHR, textStatus, errorMsg) {
+					// jQuery의 ajax error는 jqXHR, textStatus, errorMsg 3가지 파라미터 제공
+					/*
+					- jqXHR 파라미터
+					  비동기를 처리하는 주객체는 XMLHttpRequest
+					  이것을 json으로 처리한 것이 젓번째 인자로 들어옴
+					  jqXHR.status: 에러 코드
+					  jqXHR.statusText: "Internal Server Error"
+					  jqXHR.responseText: url의 full response(url반환된 결과물)
+					*/
+					console.log(`jqXHR:  ${jqXHR}`); // [object] 출력
+					console.log(`jqXHR.status: ${jqXHR.status}`);
+					console.log(`jqXHR.statusText: ${jqXHR.statusText}`); // error 고정
+					console.log(`textStatus: ${textStatus}`); // error 고정
+					console.log(`errorMsg: ${errorMsg}`); // error 메시지
+					alert("조회한 번호는 존재하지 않습니다");
+				},
+			});
+		}
+		
+		const menuTable = (selector, data) => {
+			const container = document.querySelector(selector);
+			let value = `	<br><table id="list-area" align="center">
+							<thead>
+								<tr>
+									<th width="10%">번호</th>
+									<th width="25%">메뉴명</th>
+									<th width="15%">가격</th>
+									<th width="25%">가계명</th>
+									<th width="15%">맛</th>
+									<th width="10%">종류</th>
+								</tr>
+							</thead>
+							<tbody>`;
+								if(data.length > 0) {
+									data.forEach(item => {
+										value += `
+											<tr>
+												<td><a href="javascript:findById('${item.id}')">${item.id}<a></td>
+												<td>${item.name}</td>
+												<td>${item.price}</td>
+												<td>${item.restaurant}</td>
+												<td>${item.taste}</td>
+												<td>${item.type}</td>	
+											</tr>`;
+									})
+								} else {
+									value += `<tr><td colspan="6">조회된 결과가 없습니다</td></tr>`;
+								}
+				value += `</tbody></table>`;
+				container.innerHTML = value;
+		}
+	</script>
+	
+	</div>
+</body>
+</html>

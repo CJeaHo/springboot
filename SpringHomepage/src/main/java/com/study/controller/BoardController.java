@@ -87,28 +87,6 @@ public class BoardController {
 		 boardService.update(board);
 		return "redirect:list.ac";
 	}
-	
-	/*@PostMapping("reply")
-	public String reply(@RequestParam("boardNo") Long boardNo,
-	        			@RequestParam("replyContent") String replyContent,
-	        			@RequestParam("loginMemberId") String loginMemberId,
-	        			Model model) {
-		
-		Reply reply = new Reply();
-		reply.setRefBno(boardNo);
-		reply.setRContent(replyContent);
-		reply.setRWriter(loginMemberId);
-		
-		Reply result = replyService.reply(reply);
-		
-		if (result != null) {
-	        // 댓글 등록 성공 시 리다이렉트 또는 포워딩 로직을 추가
-	        return "redirect:/detail?bNo=" + boardNo;
-	    } else {
-	        model.addAttribute("errorMsg", "댓글 등록 실패");
-	        return "common/errorPage";
-	    }
-	}*/
 }
 
 

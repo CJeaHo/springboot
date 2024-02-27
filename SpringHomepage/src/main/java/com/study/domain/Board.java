@@ -30,7 +30,7 @@ public class Board {
 		allocationSize = 1
 	)
 	@GeneratedValue(generator = "myBoardSEQ")
-	private Long bNo;
+	private Long bno;
 	@NonNull
 	private String title;
 	@NonNull

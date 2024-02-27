@@ -43,7 +43,7 @@ public class BoardService {
 
 	// 게시글 수정
 	public Board update(Board board) { 
-		Board reBoard = boardRepository.findById(board.getBNo()).get(); // 기존꺼를 가지고와서 영속성안에 넣어야한다
+		Board reBoard = boardRepository.findById(board.getBno()).get(); // 기존꺼를 가지고와서 영속성안에 넣어야한다
 		reBoard.setTitle(board.getTitle()); // 기존의 제목을 넣고
 		reBoard.setContent(board.getContent()); // 기존의 내용을 넣고
 		

@@ -14,13 +14,15 @@ public class MainController {
 
     @Autowired
     UserService userService;
+
     @GetMapping("/")
     public String mainRoot() {
-        return "main Controller";
+        return "Main Controller";
     }
 
     @PostMapping("/enroll")
     public String userEnroll(EnrollUser enrollUser) {
+        System.out.println(enrollUser.getUsername());
         userService.userEnroll(enrollUser);
         return "ok";
     }

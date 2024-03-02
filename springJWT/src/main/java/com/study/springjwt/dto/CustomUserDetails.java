@@ -1,8 +1,6 @@
 package com.study.springjwt.dto;
 
 import com.study.springjwt.domain.UserEntity;
-import com.study.springjwt.repository.UserRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
@@ -10,8 +8,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 public class CustomUserDetails implements UserDetails {
-
-
 
     private final UserEntity userEntity;
 

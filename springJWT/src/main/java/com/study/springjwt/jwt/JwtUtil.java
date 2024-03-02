@@ -30,13 +30,13 @@ public class JwtUtil {
 
     public Boolean isExpired(String token) {
         return Jwts.parser().verifyWith(secretKey).build()
-                .parseSignedClaims(token).getPayload()
-                .getExpiration().before(new Date());
+                            .parseSignedClaims(token).getPayload()
+                            .getExpiration().before(new Date());
     }
 
     // 토큰 생성
     public String createJwt(String username, String role
-                            , Long expiredMs) {
+            , Long expiredMs) {
         return Jwts.builder()
                 .claim("username", username)
                 .claim("role", role)

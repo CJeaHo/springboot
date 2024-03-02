@@ -9,20 +9,18 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class UserService {
+   @Autowired
+   UserRepository userRepository;
 
-    @Autowired
-    UserRepository userRepository;
-
-    @Autowired
-    BCryptPasswordEncoder bCryptPasswordEncoder;
+   @Autowired
+   BCryptPasswordEncoder bCryptPasswordEncoder;
 
     public void userEnroll(EnrollUser enrollUser) {
         UserEntity data = new UserEntity();
         data.setUsername(enrollUser.getUsername());
         data.setPassword(bCryptPasswordEncoder.encode(enrollUser.getPassword()));
-        data.setRole("role_user");
+        data.setRole("ROLE_ADMIN");
 
         userRepository.save(data);
     }
-
 }
